@@ -15,6 +15,40 @@ $filePath = "\\tsgswvwi01.netzbetrieb.local\data$\Daten\HL\Betriebstagebuch\PS S
 # Variablen löschen
 Get-Variable | Where-Object { !$_.Options -match 'ReadOnly' } | ForEach-Object { Remove-Variable -Name $_.Name -Force }
 
+# Korrektur Sommmerzeit
+# Zeitzone und Datumformat festlegen
+$zurichTimeZone = [TimeZoneInfo]::FindSystemTimeZoneById("W. Europe Standard Time")
+$dateTimeFormat = "dd.MM.yyyy HH:mm:ss.fff"
+
+# Inhalte der Datei einlesen
+$content = Get-Content -Path $sourceFilePath
+
+# Header und erste Kommentarzeilen beibehalten
+$processedLines = $content[0..7]
+
+# Durchgehen der Inhalte ab der ersten Datenzeile
+foreach ($line in $content[8..$content.Length]) {
+    $fields = $line -split ","  # Zerlegen der Zeile in Felder
+    
+    foreach ($i in 1,2) {
+        if ($fields[$i] -match "\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2}\.\d{3}") {
+            $dateTime = [DateTime]::ParseExact($fields[$i], $dateTimeFormat, [Globalization.CultureInfo]::InvariantCulture)
+
+            # Keine Konvertierung, wenn die Zeit bereits in lokaler Zeitzone (Zürich) vorliegt
+            if ($zurichTimeZone.IsDaylightSavingTime($dateTime)) {
+                $dateTime = $dateTime.AddHours(1)  # Nur Anpassung um eine Stunde bei Sommerzeit
+            }
+
+            $fields[$i] = $dateTime.ToString($dateTimeFormat)
+        }
+    }
+    
+    # Aktualisierte Zeile zu den verarbeiteten Zeilen hinzufügen
+    $processedLines += ($fields -join ",")
+}
+
+$processedLines | Set-Content -Path $sourceFilePath
+# Ende Korrektur Sommmerzeit
 
 # Anzahl der Zeilen, die entfernt werden sollen
 $anzahlZeilenEntfernen = 7
@@ -368,7 +402,7 @@ foreach ($recipient in $recipients) {
         SmtpServer = $smtpServer
         Port = $smtpPort
         From = $sender
-        To = $recipient
+        To = $recipient        
         Subject = "Betriebstagebuch"
         Body = $html
         BodyAsHtml = $true
