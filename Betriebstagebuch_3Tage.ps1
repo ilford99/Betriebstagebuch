@@ -3,9 +3,12 @@
 $sourceFilePath = "\\SGWVDSFS01.netzbetrieb.local\Share_NLS$\Excel-Reports\Auswertungen\Betriebstagebuch_3Tage.csv"
 
 # Pfad zu den Zieltxt-Dateien
-$targetFilePath = "\\tsgswvwi01.netzbetrieb.local\data$\Daten\HL\Betriebstagebuch\temp\Betriebstagebuch_3Tage.txt"   #Temp
-$targetCsvFilePath = "\\tsgswvwi01.netzbetrieb.local\data$\Daten\HL\Betriebstagebuch\temp\Betriebstagebuch_3Tage.csv"
+$sourceFilePath_time = "\\tsgswvwi01.netzbetrieb.local\data$\Daten\HL\Betriebstagebuch\temp\Betriebstagebuch_3Tage_time.csv"
+$targetFilePath = "\\tsgswvwi01.netzbetrieb.local\data$\Daten\HL\Betriebstagebuch\temp\Betriebstagebuch_3Tage.txt"    #Tempdatei
+$sourceFilePath_time = "\\tsgswvwi01.netzbetrieb.local\data$\Daten\HL\Betriebstagebuch\temp\Betriebstagebuch_3Tage_time.csv"
+$targetCsvFilePath = "\\tsgswvwi01.netzbetrieb.local\data$\Daten\HL\Betriebstagebuch\temp\Betriebstagebuch_3Tage.csv" #Tempdatei
 $csvSavePathHtml = "\\tsgswvwi01.netzbetrieb.local\data$\Daten\HL\Betriebstagebuch\BT_3Tage.html"
+
 
 ################################################################################################################################
 
@@ -14,6 +17,7 @@ $filePath = "\\tsgswvwi01.netzbetrieb.local\data$\Daten\HL\Betriebstagebuch\PS S
 
 # Variablen löschen
 Get-Variable | Where-Object { !$_.Options -match 'ReadOnly' } | ForEach-Object { Remove-Variable -Name $_.Name -Force }
+
 
 # Korrektur Sommmerzeit
 # Zeitzone und Datumformat festlegen

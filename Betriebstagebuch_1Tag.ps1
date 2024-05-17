@@ -3,9 +3,12 @@
 $sourceFilePath = "\\SGWVDSFS01.netzbetrieb.local\Share_NLS$\Excel-Reports\Auswertungen\Betriebstagebuch_1Tag.csv"
 
 # Pfad zu den Zieltxt-Dateien
+$sourceFilePath_time = "\\tsgswvwi01.netzbetrieb.local\data$\Daten\HL\Betriebstagebuch\temp\Betriebstagebuch_1Tag_time.csv"
 $targetFilePath = "\\tsgswvwi01.netzbetrieb.local\data$\Daten\HL\Betriebstagebuch\temp\Betriebstagebuch_1Tag.txt"    #Tempdatei
+$sourceFilePath_time = "\\tsgswvwi01.netzbetrieb.local\data$\Daten\HL\Betriebstagebuch\temp\Betriebstagebuch_1Tag_time.csv"
 $targetCsvFilePath = "\\tsgswvwi01.netzbetrieb.local\data$\Daten\HL\Betriebstagebuch\temp\Betriebstagebuch_1Tag.csv" #Tempdatei
 $csvSavePathHtml = "\\tsgswvwi01.netzbetrieb.local\data$\Daten\HL\Betriebstagebuch\BT_1Tag.html"
+
 
 ################################################################################################################################
 
@@ -48,14 +51,14 @@ foreach ($line in $content[8..$content.Length]) {
     $processedLines += ($fields -join ",")
 }
 
-$processedLines | Set-Content -Path $sourceFilePath
+$processedLines | Set-Content -Path $sourceFilePath_time
 # Ende Korrektur Sommmerzeit
 
 # Anzahl der Zeilen, die entfernt werden sollen
 $anzahlZeilenEntfernen = 7
 
 # Archivexport NLS einlesen mit der richtigen Kodierung # Die ersten 7 Zeilen entfernen # Die bereinigten Daten in eine Test Datei speichern mit der richtigen Kodierung
-$lines = Get-Content -Path $sourceFilePath -Encoding Default
+$lines = Get-Content -Path $sourceFilePath_time -Encoding Default
 $lines = $lines | Select-Object -Skip $anzahlZeilenEntfernen
 
 $lines | Set-Content -Path $targetFilePath -Encoding UTF8
